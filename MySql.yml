@@ -1,0 +1,47 @@
+# Manifest
+# Simple implementation of MySql. Load Balancer is ignored here
+
+name: MySql
+version: 0.1
+
+launch:
+    parameters:
+        - retryCount: &RC
+            name: Retry count on fail
+            min: 1
+            max: 10
+        - mySqlAdminPassword: &MSQLP
+            name: Admin password for Mysql DataBase
+            length:
+                min: 6
+                max: 20
+    steps:
+        - provision: &PP
+            provisionVm:
+                action: $::com.gd.vmpool.provision
+                provider: gogrid
+                parameters:
+                    hardwareId: 2
+                onError:
+                    retryCount: $parameters:retryCount
+        - install:
+            installMySql: &IMSQL
+                action: $::com.gd.chef.run
+                runList: 'recipe[mysql]'
+                parameters:
+                    adminPassword: $parameters:mySqlAdminPassword
+                hosts: $steps.provision.provisionVm.ip
+    return:
+        - appUrl:
+            name: MySql url
+            value: $($steps.provision.provisionVm.ip):3306
+        - vmIds:
+            name: IDs of running VMs
+            value: $steps.provision.provisionVm.instanceId
+
+destroy:
+    steps:
+        - destroy:
+            destroyVMs:
+                action: $::com.gd.vmpool.destroy
+                instanceIds: $:vmId

@@ -1,0 +1,67 @@
+# Manifest
+# Simple implementation of LAMP
+
+name: LAMP
+version: 0.1
+
+launch:
+    parameters:
+        - sourceCodeUrl:
+            name: Url to your php application
+            check: validUrl
+        - adminPassword:
+            name: Admin password for MySql DataBase
+            length:
+                min: 6
+                max: 20
+    steps:
+        - provision:
+            provisionDb: &PDB
+                action: $::com.gd.vmpool.provision
+                provider: gogrid
+                parameters:
+                    hardwareId: 2
+                onError:
+                    action: fail
+            provisionApp: *PDB
+        - install:
+            installMySql:
+                action: $::com.gd.chef.run
+                runList: 'recipe[mysql]'
+                parameters:
+                    adminPassword: $parameters:adminPassword
+                hosts: $steps.provision.provisionDb.ip
+            installApplication:
+                action: $::com.gd.chef.run
+                runList: 'recipe[myApplicationRecipe]'
+                parameters:
+                    adminPassword: $parameters:adminPassword
+                    applicationUrl: $parameters:sourceCodeUrl
+                    connectionString: $steps.provision.provisionDb.connectionString
+                hosts: $steps.provision.provisionApp.ip
+    return:
+        - appUrl:
+            name: MySql url
+            value: http://$($steps.provision.provisionApp.ip)/myapp
+        - vmDbIds:
+            name: IDs of running DB VMs
+            value: $steps.provision.provisionDb.instanceId
+         - vmAppIds:
+            name: IDs of running APP VMs
+            value: $steps.provision.provisionApp.instanceId
+
+destroy:
+    steps:
+        - destroy:
+            destroyVMs:
+                action: $::com.gd.vmpool.destroy
+                instanceIds: $:vmIds
+
+
+
+
+
+
+
+
+
