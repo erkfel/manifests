@@ -46,7 +46,7 @@ launch:
         - vmDbIds:
             name: IDs of running DB VMs
             value: $steps.provision.provisionDb.instanceId
-         - vmAppIds:
+        - vmAppIds:
             name: IDs of running APP VMs
             value: $steps.provision.provisionApp.instanceId
 
