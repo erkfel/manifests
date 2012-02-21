@@ -8,7 +8,7 @@ launch:
     parameters:
         - sourceCodeUrl:
             name: Url to your php application
-            check: validUrl
+#            check: validUrl
         - adminPassword:
             name: Admin password for MySql DataBase
             length:
