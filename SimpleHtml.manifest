@@ -1,0 +1,31 @@
+
+name: Simple html application
+version: 0.0.1
+
+launch:
+    parameters: &Sources
+        sourceCodeUrl:
+            name: Url to the source code
+            value: https://erkfel@github.com/cometera/ui-proto.git
+    steps:
+        - provision:
+            provisionVM:
+                action: $::com.gd.vmpool.provision
+                provider: amazon
+        - install:
+            installApachePhpServer:
+                action: $::com.gd.chef.run
+                runlist: 'recipe[apache-php]'
+                hosts: $launch.steps.provision.provisionApp.ip
+        - updateCode: &UpdateCodeStep
+            updateCodebase:
+                action: $::com.gd.sourcecontrol.git
+                sourceUrl: $parameters.sourceCodeUrl
+                targetUrl: $launch.steps.provision.provisionApp.ip
+
+update:
+    parameters: *Sources
+    steps:
+        - updateCode: *UpdateCodeStep
+
+
