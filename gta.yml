@@ -11,6 +11,7 @@ launch:
                action: "chefrun"
                parameters:
                     phase: "downloadArtifacts"
+                    precedingPhases: ["provision"]
                     runList: ["recipe[atg::artifacts]"]
                     roles: ["defaultRole"]
                     isSolo: true
