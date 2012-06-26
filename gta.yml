@@ -3,94 +3,64 @@ launch:
         - cookbooksUrl:
             description: Cookbooks url
     steps:
-        - provision-db-tier:
+        - provision-node:
             action: compute.grow
             output:
                 hosts: ips
         - artifacts-download:
-               action: "chefrun"
+               action: install
                parameters:
-                    phase: "downloadArtifacts"
-                    precedingPhases: ["provision"]
+                    phase: "install"
                     runList: ["recipe[atg::artifacts]"]
-                    roles: ["defaultRole"]
-                    isSolo: true
                     recipeUrl: $cookbooksUrl
-        - init:
-               action: "chefrun"
+        - node-init:
+               action: install
                parameters:
-                    phase: "init"
-                    precedingPhases: ["downloadArtifacts"]
+                    phase: "install"
                     runList: ["recipe[atg::init]"]
-                    roles: ["defaultRole"]
-                    isSolo: true
                     recipeUrl: $cookbooksUrl
         - mysql-install:
-               action: "chefrun"
+               action: install
                parameters:
-                    phase: "mysqlInstall"
-                    precedingPhases: ["init"]
+                    phase: "install"
                     runList: ["recipe[atg::mysql]"]
-                    roles: ["defaultRole"]
-                    isSolo: true
                     recipeUrl: $cookbooksUrl
         - java-install:
-               action: "chefrun"
+               action: install
                parameters:
-                    phase: "javaInstall"
-                    precedingPhases: ["mysqlInstall"]
+                    phase: "install"
                     runList: ["recipe[atg::java]"]
-                    roles: ["defaultRole"]
-                    isSolo: true
                     recipeUrl: $cookbooksUrl
         - jboss-install:
-               action: "chefrun"
+               action: install
                parameters:
-                    phase: "jbossInstall"
-                    precedingPhases: ["javaInstall"]
+                    phase: "install"
                     runList: ["recipe[atg::jboss]"]
-                    roles: ["defaultRole"]
-                    isSolo: true
                     recipeUrl: $cookbooksUrl
         - profile-setup:
-               action: "chefrun"
+               action: install
                parameters:
-                    phase: "profileSetup"
-                    precedingPhases: ["jbossInstall"]
+                    phase: "install"
                     roles: ["default"]
-                    runList: ["recipe[atg::profile]"]
-                    roles: ["defaultRole"]
-                    isSolo: true
                     recipeUrl: $cookbooksUrl
         - agt-core-install:
-               action: "chefrun"
+               action: install
                parameters:
-                    phase: "atgCoreInstall"
-                    precedingPhases: ["profileSetup"]
-                    roles: ["default"]
+                    phase: "install"
                     runList: ["recipe[atg::atg-core]"]
-                    roles: ["defaultRole"]
-                    isSolo: true
                     recipeUrl: $cookbooksUrl
         - agt-crs-install:
-               action: "chefrun"
+               action: install
                parameters:
-                    phase: "atgCrsInstall"
-                    precedingPhases: ["atgCoreInstall"]
-                    roles: ["default"]
+                    phase: "install"
                     runList: ["recipe[atg::atg-crs]"]
-                    roles: ["defaultRole"]
-                    isSolo: true
                     recipeUrl: $cookbooksUrl
         - agt-cim-configuration:
-               action: "chefrun"
+               action: install
                parameters:
-                    phase: "atgCimConfig"
-                    precedingPhases: ["atgCrsInstall"]
-                    roles: ["default"]
+                    phase: "setup"
+                    precedingPhases: ["install"]
                     runList: ["recipe[atg::atg-cim]"]
-                    roles: ["defaultRole"]
-                    isSolo: true
                     recipeUrl: $cookbooksUrl
     return:
             app-url:
