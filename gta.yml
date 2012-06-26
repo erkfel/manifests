@@ -12,6 +12,7 @@ launch:
                parameters:
                     phase: "downloadArtifacts"
                     runList: ["recipe[atg::artifacts]"]
+                    roles: ["defaultRole"]
                     isSolo: true
                     recipeUrl: $cookbooksUrl
         - init:
@@ -20,6 +21,7 @@ launch:
                     phase: "init"
                     precedingPhases: ["downloadArtifacts"]
                     runList: ["recipe[atg::init]"]
+                    roles: ["defaultRole"]
                     isSolo: true
                     recipeUrl: $cookbooksUrl
         - mysql-install:
@@ -28,6 +30,7 @@ launch:
                     phase: "mysqlInstall"
                     precedingPhases: ["init"]
                     runList: ["recipe[atg::mysql]"]
+                    roles: ["defaultRole"]
                     isSolo: true
                     recipeUrl: $cookbooksUrl
         - java-install:
@@ -36,6 +39,7 @@ launch:
                     phase: "javaInstall"
                     precedingPhases: ["mysqlInstall"]
                     runList: ["recipe[atg::java]"]
+                    roles: ["defaultRole"]
                     isSolo: true
                     recipeUrl: $cookbooksUrl
         - jboss-install:
@@ -44,6 +48,7 @@ launch:
                     phase: "jbossInstall"
                     precedingPhases: ["javaInstall"]
                     runList: ["recipe[atg::jboss]"]
+                    roles: ["defaultRole"]
                     isSolo: true
                     recipeUrl: $cookbooksUrl
         - profile-setup:
@@ -53,6 +58,7 @@ launch:
                     precedingPhases: ["jbossInstall"]
                     roles: ["default"]
                     runList: ["recipe[atg::profile]"]
+                    roles: ["defaultRole"]
                     isSolo: true
                     recipeUrl: $cookbooksUrl
         - agt-core-install:
@@ -62,6 +68,7 @@ launch:
                     precedingPhases: ["profileSetup"]
                     roles: ["default"]
                     runList: ["recipe[atg::atg-core]"]
+                    roles: ["defaultRole"]
                     isSolo: true
                     recipeUrl: $cookbooksUrl
         - agt-crs-install:
@@ -71,6 +78,7 @@ launch:
                     precedingPhases: ["atgCoreInstall"]
                     roles: ["default"]
                     runList: ["recipe[atg::atg-crs]"]
+                    roles: ["defaultRole"]
                     isSolo: true
                     recipeUrl: $cookbooksUrl
         - agt-cim-configuration:
@@ -80,6 +88,7 @@ launch:
                     precedingPhases: ["atgCrsInstall"]
                     roles: ["default"]
                     runList: ["recipe[atg::atg-cim]"]
+                    roles: ["defaultRole"]
                     isSolo: true
                     recipeUrl: $cookbooksUrl
     return:
