@@ -41,7 +41,7 @@ launch:
                action: install
                parameters:
                     phase: "install"
-                    roles: ["default"]
+                    runList: ["recipe[atg::profile]"]
                     recipeUrl: $cookbooksUrl
         - agt-core-install:
                action: install
