@@ -15,56 +15,56 @@ launch:
                     roles: ["defaultRole"]
                     recipeUrl: $cookbooksUrl
         - init:
-               action: "chefrun"
+               action: install
                parameters:
                     phase: "install"
                     precedingPhases: ["download"]
                     runList: ["recipe[atg::init]"]
                     recipeUrl: $cookbooksUrl
         - mysql-install:
-               action: "chefrun"
+               action: install
                parameters:
                     phase: "install"
                     precedingPhases: ["download"]
                     runList: ["recipe[atg::mysql]"]
                     recipeUrl: $cookbooksUrl
         - java-install:
-               action: "chefrun"
+               action: install
                parameters:
                     phase: "install"
                     precedingPhases: ["download"]
                     runList: ["recipe[atg::java]"]
                     recipeUrl: $cookbooksUrl
         - jboss-install:
-               action: "chefrun"
+               action: install
                parameters:
                     phase: "install"
                     precedingPhases: ["download"]
                     runList: ["recipe[atg::jboss]"]
                     recipeUrl: $cookbooksUrl
         - profile-setup:
-               action: "chefrun"
+               action: install
                parameters:
                     phase: "install"
                     precedingPhases: ["download"]
                     runList: ["recipe[atg::profile]"]
                     recipeUrl: $cookbooksUrl
         - agt-core-install:
-               action: "chefrun"
+               action: install
                parameters:
                     phase: "install"
                     precedingPhases: ["download"]
                     runList: ["recipe[atg::atg-core]"]
                     recipeUrl: $cookbooksUrl
         - agt-crs-install:
-               action: "chefrun"
+               action: install
                parameters:
                     phase: "install"
                     precedingPhases: ["download"]
                     runList: ["recipe[atg::atg-crs]"]
                     recipeUrl: $cookbooksUrl
         - agt-cim-configuration:
-               action: "chefrun"
+               action: install
                parameters:
                     phase: "setup"
                     precedingPhases: ["install"]
