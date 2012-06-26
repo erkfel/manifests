@@ -87,4 +87,9 @@ launch:
                 description: Url to the application
                 value: http://${hosts}
 
-
+destroy:
+    steps:
+        - destroy-vm:
+            action: undeployEnv
+            parameters:
+                phase: destroy
