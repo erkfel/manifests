@@ -14,6 +14,7 @@ launch:
             parameters:
                 ec2SecurityGroup: ATG
                 hardwareId: $instnaceSize
+                imageId: us-east-1/ami-3ce23f55
             output:
                 host: ips
         - artifacts-download:
