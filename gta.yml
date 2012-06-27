@@ -69,10 +69,20 @@ launch:
                     precedingPhases: ["atg-crs"]
                     runList: ["recipe[atg::atg-cim]"]
                     recipeUrl: $cookbooksUrl
+        - jboss-startup:
+               action: install
+               parameters:
+                    phase: "post"
+                    precedingPhases: ["atg-cim"]
+                    runList: ["recipe[atg::post]"]
+                    recipeUrl: $cookbooksUrl
     return:
             app-url:
-                description: Url to the application
-                value: http://${host}
+                description: ATG Commerce Reference Store
+                value: http://${host}:8080/crs
+            app-url:
+                description: ATG Business Control Center
+                value: http://${host}:8180/bcc
 
 destroy:
     steps:
