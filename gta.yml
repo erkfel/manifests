@@ -77,12 +77,12 @@ launch:
                     runList: ["recipe[atg::post]"]
                     recipeUrl: $cookbooksUrl
     return:
-            app-url:
+            reference-store:
                 description: ATG Commerce Reference Store
                 value: http://${host}:8080/crs
-            app-url:
+            control-center:
                 description: ATG Business Control Center
-                value: http://${host}:8180/bcc
+                value: http://${host}:8180/atg/bcc
 
 destroy:
     steps:
