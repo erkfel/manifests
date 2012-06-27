@@ -2,9 +2,17 @@ launch:
     parameters:
         - cookbooksUrl:
             description: Cookbooks url
+        - app-version:
+                    description: Instnace size
+                    default: "m1.small"
+                    enum:
+                        "m1.medium": "m1.medium"
+                        "m1.large": "m1.large"
     steps:
         - node-provision:
             action: compute.grow
+            parameters:
+                ec2SecurityGroup: ATG
             output:
                 host: ips
         - artifacts-download:
