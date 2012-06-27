@@ -3,77 +3,76 @@ launch:
         - cookbooksUrl:
             description: Cookbooks url
     steps:
-        - provision-db-tier:
+        - node-provision:
             action: compute.grow
             output:
-                hosts: ips
+                host: ips
         - artifacts-download:
                action: install
                parameters:
                     phase: "download"
                     runList: ["recipe[atg::artifacts]"]
-                    roles: ["defaultRole"]
                     recipeUrl: $cookbooksUrl
-        - init:
+        - node-init:
                action: install
                parameters:
-                    phase: "install"
+                    phase: "init"
                     precedingPhases: ["download"]
                     runList: ["recipe[atg::init]"]
                     recipeUrl: $cookbooksUrl
         - mysql-install:
                action: install
                parameters:
-                    phase: "install"
-                    precedingPhases: ["download"]
+                    phase: "mysql"
+                    precedingPhases: ["init"]
                     runList: ["recipe[atg::mysql]"]
                     recipeUrl: $cookbooksUrl
         - java-install:
                action: install
                parameters:
-                    phase: "install"
-                    precedingPhases: ["download"]
+                    phase: "java"
+                    precedingPhases: ["mysql"]
                     runList: ["recipe[atg::java]"]
                     recipeUrl: $cookbooksUrl
         - jboss-install:
                action: install
                parameters:
-                    phase: "install"
-                    precedingPhases: ["download"]
+                    phase: "jboss"
+                    precedingPhases: ["java"]
                     runList: ["recipe[atg::jboss]"]
                     recipeUrl: $cookbooksUrl
         - profile-setup:
                action: install
                parameters:
-                    phase: "install"
-                    precedingPhases: ["download"]
+                    phase: "profile"
+                    precedingPhases: ["jboss"]
                     runList: ["recipe[atg::profile]"]
                     recipeUrl: $cookbooksUrl
         - agt-core-install:
                action: install
                parameters:
-                    phase: "install"
-                    precedingPhases: ["download"]
+                    phase: "atg-core"
+                    precedingPhases: ["profile"]
                     runList: ["recipe[atg::atg-core]"]
                     recipeUrl: $cookbooksUrl
         - agt-crs-install:
                action: install
                parameters:
-                    phase: "install"
-                    precedingPhases: ["download"]
+                    phase: "atg-crs"
+                    precedingPhases: ["atg-core"]
                     runList: ["recipe[atg::atg-crs]"]
                     recipeUrl: $cookbooksUrl
         - agt-cim-configuration:
                action: install
                parameters:
-                    phase: "setup"
-                    precedingPhases: ["install"]
+                    phase: "atg-cim"
+                    precedingPhases: ["atg-crs"]
                     runList: ["recipe[atg::atg-cim]"]
                     recipeUrl: $cookbooksUrl
     return:
             app-url:
                 description: Url to the application
-                value: http://${hosts}
+                value: http://${host}
 
 destroy:
     steps:
