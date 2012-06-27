@@ -1,19 +1,18 @@
 launch:
     parameters:
-        - cookbooksUrl:
-            description: Cookbooks url
         - instnaceSize:
-                    description: Instnace size
-                    enum:
-                        "m1.medium": "m1.medium"
-                        "m1.large": "m1.large"
+            description: Instnace size
+            default: "m1.medium"
+            enum:
+                "m1.medium": "m1.medium"
+                "m1.large": "m1.large"
     steps:
         - node-provision:
             action: compute.grow
             parameters:
                 ec2SecurityGroup: ATG
-                hardwareId: $instnaceSize
                 imageId: us-east-1/ami-3ce23f55
+                hardwareId: $instnaceSize
             output:
                 host: ips
         - artifacts-download:
@@ -21,77 +20,64 @@ launch:
                parameters:
                     phase: "download"
                     runList: ["recipe[atg::artifacts]"]
-                    recipeUrl: $cookbooksUrl
         - node-init:
                action: install
                parameters:
                     phase: "init"
                     precedingPhases: ["download"]
                     runList: ["recipe[atg::init]"]
-                    recipeUrl: $cookbooksUrl
         - mysql-install:
                action: install
                parameters:
                     phase: "mysql"
                     precedingPhases: ["init"]
                     runList: ["recipe[atg::mysql]"]
-                    recipeUrl: $cookbooksUrl
         - java-install:
                action: install
                parameters:
                     phase: "java"
                     precedingPhases: ["mysql"]
                     runList: ["recipe[atg::java]"]
-                    recipeUrl: $cookbooksUrl
         - jboss-install:
                action: install
                parameters:
                     phase: "jboss"
                     precedingPhases: ["java"]
                     runList: ["recipe[atg::jboss]"]
-                    recipeUrl: $cookbooksUrl
         - profile-setup:
                action: install
                parameters:
                     phase: "profile"
                     precedingPhases: ["jboss"]
                     runList: ["recipe[atg::profile]"]
-                    recipeUrl: $cookbooksUrl
         - agt-core-install:
                action: install
                parameters:
                     phase: "atg-core"
                     precedingPhases: ["profile"]
                     runList: ["recipe[atg::atg-core]"]
-                    recipeUrl: $cookbooksUrl
         - agt-crs-install:
                action: install
                parameters:
                     phase: "atg-crs"
                     precedingPhases: ["atg-core"]
                     runList: ["recipe[atg::atg-crs]"]
-                    recipeUrl: $cookbooksUrl
         - agt-cim-configuration:
                action: install
                parameters:
                     phase: "atg-cim"
                     precedingPhases: ["atg-crs"]
                     runList: ["recipe[atg::atg-cim]"]
-                    recipeUrl: $cookbooksUrl
         - jboss-startup:
                action: install
                parameters:
                     phase: "post"
                     precedingPhases: ["atg-cim"]
                     runList: ["recipe[atg::post]"]
-                    recipeUrl: $cookbooksUrl
     return:
             reference-store:
                 description: ATG Commerce Reference Store
                 value: http://${host}:8080/crs
-            control-center:
-                description: ATG Business Control Center
-                value: http://${host}:8180/atg/bcc
 
 destroy:
     steps:
