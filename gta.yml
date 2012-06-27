@@ -74,16 +74,12 @@ launch:
                     phase: "post"
                     precedingPhases: ["atg-cim"]
                     runList: ["recipe[atg::post]"]
-        - check-status:
-               action: execrun
+        - check-jboss:
+               action: install
                parameters:
                     phase: "check"
                     precedingPhases: ["post"]
-                    roles: ["defaultRole"]
-                    command:
-                       - wget
-                       - --spider
-                       - ${host}:8080/crs
+                    runList: ["recipe[atg::check]"]
     return:
             reference-store:
                 description: ATG Commerce Reference Store
