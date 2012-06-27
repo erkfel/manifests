@@ -6,6 +6,7 @@ launch:
                     description: Instnace size
                     default: "m1.small"
                     enum:
+                        "m1.small": "m1.small"
                         "m1.medium": "m1.medium"
                         "m1.large": "m1.large"
     steps:
