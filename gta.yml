@@ -11,7 +11,7 @@ launch:
             action: compute.grow
             parameters:
                 ec2SecurityGroup: ATG
-                imageId: us-east-1/ami-a29943cb
+                imageId: us-east-1/ami-87c31aee
                 hardwareId: $instnaceSize
             output:
                 host: ips
