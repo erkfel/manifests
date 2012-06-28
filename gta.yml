@@ -50,19 +50,19 @@ launch:
                     phase: "profile"
                     precedingPhases: ["jboss"]
                     runList: ["recipe[atg::profile]"]
-        - agt-core-install:
+        - atg-core-install:
                action: install
                parameters:
                     phase: "atg-core"
                     precedingPhases: ["profile"]
                     runList: ["recipe[atg::atg-core]"]
-        - agt-crs-install:
+        - atg-crs-install:
                action: install
                parameters:
                     phase: "atg-crs"
                     precedingPhases: ["atg-core"]
                     runList: ["recipe[atg::atg-crs]"]
-        - agt-cim-configuration:
+        - atg-cim-configuration:
                action: install
                parameters:
                     phase: "atg-cim"
