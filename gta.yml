@@ -79,7 +79,7 @@ launch:
                 description: ATG Commerce Reference Store
                 value: http://${host}:8080/crs
 
-redeploy:
+reinstall:
     steps:
         - cleanup:
                action: install
