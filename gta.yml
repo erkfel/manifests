@@ -6,13 +6,22 @@ launch:
             enum:
                 "m1.medium": "m1.medium"
                 "m1.large": "m1.large"
+        - os:
+            description: Operation system
+            enum:
+                "CentOS 6.0": "us-east-1/ami-03559b6a"
+                "CentOS 6.2": "us-east-1/ami-4e9b4427"
+        - identity:
+            description: User name
+            default: "root"
     steps:
         - node-provision:
             action: compute.grow
             parameters:
-                ec2SecurityGroup: ATG
-                imageId: us-east-1/ami-3ce23f55
+                ec2SecurityGroup: atg
+                imageId: $os
                 hardwareId: $instnaceSize
+                vmIdentity: $identity
             output:
                 host: ips
         - artifacts-download:
@@ -44,11 +53,17 @@ launch:
                     phase: "jboss"
                     precedingPhases: ["java"]
                     runList: ["recipe[atg::jboss]"]
+        - tomcat-install: &tomcatInstall
+               action: install
+               parameters:
+                    phase: "tomcat"
+                    precedingPhases: ["jboss"]
+                    runList: ["recipe[atg::tomcat]"]
         - profile-setup: &profileSetup
                action: install
                parameters:
                     phase: "profile"
-                    precedingPhases: ["jboss"]
+                    precedingPhases: ["tomcat"]
                     runList: ["recipe[atg::profile]"]
         - atg-core-install: &atgCoreInstall
                action: install
@@ -67,17 +82,26 @@ launch:
                parameters:
                     phase: "atg-cim"
                     precedingPhases: ["atg-crs"]
-                    runList: ["recipe[atg::atg-cim]"]
-        - jboss-startup: &jbossStartup
+                    runList: ["recipe[atg::atg-cim-tomcat-no-cie]"]
+        - iptables-configuration: &iptablesConfiguration
                action: install
                parameters:
-                    phase: "post"
+                    phase: "iptables"
                     precedingPhases: ["atg-cim"]
-                    runList: ["recipe[atg::post]"]
+                    runList: ["recipe[atg::iptables]"]
+        - tomcat-startup: &tomcatStartup
+               action: install
+               parameters:
+                    phase: "tomcat-startup"
+                    precedingPhases: ["iptables"]
+                    runList: ["recipe[atg::post-tomcat]"]
     return:
             reference-store:
                 description: ATG Commerce Reference Store
                 value: http://${host}:8080/crs
+            reference-store:
+                description: ATG Business Control Center
+                value: http://${host}:8180/atg/bcc
 
 reinstall:
     steps:
