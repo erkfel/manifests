@@ -103,24 +103,24 @@ launch:
                 description: ATG Business Control Center
                 value: http://${host}:8180/atg/bcc
 
-reinstall:
-    steps:
-        - cleanup:
-               action: install
-               parameters:
-                    phase: "cleanup"
-                    runList: ["recipe[atg::cleanup]"]
-        - jboss-install:
-               action: install
-               parameters:
-                    phase: "jboss"
-                    precedingPhases: ["cleanup"]
-                    runList: ["recipe[atg::jboss]"]
-        - profile-setup: *profileSetup
-        - atg-core-install: *atgCoreInstall
-        - atg-crs-install: *atgCrsInstall
-        - atg-cim-configuration: *atgCimConfiguration
-        - jboss-startup: *jbossStartup
+#reinstall:
+#    steps:
+#        - cleanup:
+#               action: install
+#               parameters:
+#                    phase: "cleanup"
+#                    runList: ["recipe[atg::cleanup]"]
+#        - jboss-install:
+#               action: install
+#               parameters:
+#                    phase: "jboss"
+#                    precedingPhases: ["cleanup"]
+#                    runList: ["recipe[atg::jboss]"]
+#        - profile-setup: *profileSetup
+#        - atg-core-install: *atgCoreInstall
+#        - atg-crs-install: *atgCrsInstall
+#        - atg-cim-configuration: *atgCimConfiguration
+#        - jboss-startup: *jbossStartup
 
 destroy:
     steps:
