@@ -11,9 +11,6 @@ launch:
             enum:
                 "CentOS 6.0": "us-east-1/ami-03559b6a"
                 "CentOS 6.2": "us-east-1/ami-4e9b4427"
-        - identity:
-            description: User name
-            default: "root"
     steps:
         - node-provision:
             action: compute.grow
@@ -21,7 +18,7 @@ launch:
                 ec2SecurityGroup: atg
                 imageId: $os
                 hardwareId: $instnaceSize
-                vmIdentity: $identity
+                vmIdentity: "root"
             output:
                 host: ips
         - artifacts-download:
@@ -99,28 +96,48 @@ launch:
             reference-store:
                 description: ATG Commerce Reference Store
                 value: http://${host}:8080/crs
-            reference-store:
+            controll-center:
                 description: ATG Business Control Center
                 value: http://${host}:8180/atg/bcc
 
-#reinstall:
-#    steps:
-#        - cleanup:
-#               action: install
-#               parameters:
-#                    phase: "cleanup"
-#                    runList: ["recipe[atg::cleanup]"]
-#        - jboss-install:
-#               action: install
-#               parameters:
-#                    phase: "jboss"
-#                    precedingPhases: ["cleanup"]
-#                    runList: ["recipe[atg::jboss]"]
-#        - profile-setup: *profileSetup
-#        - atg-core-install: *atgCoreInstall
-#        - atg-crs-install: *atgCrsInstall
-#        - atg-cim-configuration: *atgCimConfiguration
-#        - jboss-startup: *jbossStartup
+reinstall:
+    steps:
+        - tomcat-stop:
+               action: install
+               parameters:
+                    phase: "stop-tomcat"
+                    runList: ["recipe[atg::stop-tomcat]"]
+        - cleanup-jboss:
+               action: install
+               parameters:
+                    phase: "cleanup-jboss"
+                    precedingPhases: ["stop-tomcat"]
+                    runList: ["recipe[atg::cleanup-jboss]"]
+        - cleanup-tomcat:
+               action: install
+               parameters:
+                    phase: "cleanup-tomcat"
+                    precedingPhases: ["cleanup-jboss"]
+                    runList: ["recipe[atg::cleanup-tomcat]"]
+        - cleanup:
+               action: install
+               parameters:
+                    phase: "cleanup"
+                    precedingPhases: ["cleanup-tomcat"]
+                    runList: ["recipe[atg::cleanup]"]
+        - jboss-install:
+               action: install
+               parameters:
+                    phase: "jboss"
+                    precedingPhases: ["cleanup"]
+                    runList: ["recipe[atg::jboss]"]
+        - tomcat-install: *tomcatInstall
+        - profile-setup: *profileSetup
+        - atg-core-install: *atgCoreInstall
+        - atg-crs-install: *atgCrsInstall
+        - atg-cim-configuration: *atgCimConfiguration
+        - iptables-configuration: *iptablesConfiguration
+        - tomcat-startup: *tomcatStartup
 
 destroy:
     steps:
