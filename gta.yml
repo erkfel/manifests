@@ -10,7 +10,7 @@ launch:
             description: Operation system
             enum:
                 "CentOS 6.0": "us-east-1/ami-03559b6a"
-                "CentOS 6.2": "us-east-1/ami-4e9b4427"
+                "CentOS 6.2": "us-east-1/ami-5bf15d32"
     steps:
         - node-provision:
             action: compute.grow
