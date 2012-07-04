@@ -6,16 +6,11 @@ launch:
             enum:
                 "m1.medium": "m1.medium"
                 "m1.large": "m1.large"
-        - os:
-            description: Operation system
-            enum:
-                "Ubuntu 10.04": "us-east-1/ami-8fac75e6"
     steps:
         - node-provision:
             action: compute.grow
             parameters:
                 ec2SecurityGroup: atg
-                imageId: $os
                 hardwareId: $instnaceSize
             output:
                 host: ips
