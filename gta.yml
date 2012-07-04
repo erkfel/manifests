@@ -11,6 +11,7 @@ launch:
             enum:
                 "Ubuntu 10.04": "us-east-1/ami-0fac7566"
                 "CentOS 6.0": "us-east-1/ami-03559b6a"
+                "CentOS 6.0 our": "us-east-1/ami-5bf15d32"
                 "CentOS 6.2": "us-east-1/ami-4e9b4427"
         - identity:
             description: User name
