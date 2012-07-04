@@ -6,12 +6,16 @@ launch:
             enum:
                 "m1.medium": "m1.medium"
                 "m1.large": "m1.large"
+        - os:
+            description: Operation system
+            enum:
+                "Ubuntu 10.04": "us-east-1/ami-8fac75e6"
     steps:
         - node-provision:
             action: compute.grow
             parameters:
-                ec2SecurityGroup: ATG
-                imageId: us-east-1/ami-3ce23f55
+                ec2SecurityGroup: atg
+                imageId: $os
                 hardwareId: $instnaceSize
             output:
                 host: ips
@@ -20,35 +24,41 @@ launch:
                parameters:
                     phase: "download"
                     runList: ["recipe[atg::artifacts]"]
-        - node-init:
+        - node-init: &nodeInit
                action: install
                parameters:
                     phase: "init"
                     precedingPhases: ["download"]
                     runList: ["recipe[atg::init]"]
-        - mysql-install:
+        - mysql-install: &mysqlInstall
                action: install
                parameters:
                     phase: "mysql"
                     precedingPhases: ["init"]
                     runList: ["recipe[atg::mysql]"]
-        - java-install:
+        - java-install: &javaInstall
                action: install
                parameters:
                     phase: "java"
                     precedingPhases: ["mysql"]
                     runList: ["recipe[atg::java]"]
-        - jboss-install:
+        - jboss-install: &jbossInstall
                action: install
                parameters:
                     phase: "jboss"
                     precedingPhases: ["java"]
                     runList: ["recipe[atg::jboss]"]
+        - tomcat-install: &tomcatInstall
+               action: install
+               parameters:
+                    phase: "tomcat"
+                    precedingPhases: ["jboss"]
+                    runList: ["recipe[atg::tomcat]"]
         - profile-setup: &profileSetup
                action: install
                parameters:
                     phase: "profile"
-                    precedingPhases: ["jboss"]
+                    precedingPhases: ["tomcat"]
                     runList: ["recipe[atg::profile]"]
         - atg-core-install: &atgCoreInstall
                action: install
@@ -67,36 +77,69 @@ launch:
                parameters:
                     phase: "atg-cim"
                     precedingPhases: ["atg-crs"]
-                    runList: ["recipe[atg::atg-cim]"]
-        - jboss-startup: &jbossStartup
+                    runList: ["recipe[atg::atg-cim-tomcat-no-cie]"]
+        - iptables-configuration: &iptablesConfiguration
                action: install
                parameters:
-                    phase: "post"
+                    phase: "iptables"
                     precedingPhases: ["atg-cim"]
-                    runList: ["recipe[atg::post]"]
+                    runList: ["recipe[atg::iptables]"]
+        - tomcat-startup: &tomcatStartup
+               action: install
+               parameters:
+                    phase: "tomcat-startup"
+                    precedingPhases: ["iptables"]
+                    runList: ["recipe[atg::post-tomcat]"]
     return:
             reference-store:
                 description: ATG Commerce Reference Store
                 value: http://${host}:8080/crs
+            controll-center:
+                description: ATG Business Control Center
+                value: http://${host}:8180/atg/bcc
 
 reinstall:
     steps:
+        - node-init: *nodeInit
+        - mysql-install: *mysqlInstall
+        - tomcat-stop:
+               action: install
+               parameters:
+                    phase: "stop-tomcat"
+                    precedingPhases: ["mysql"]
+                    runList: ["recipe[atg::stop-tomcat]"]
+        - cleanup-jboss:
+               action: install
+               parameters:
+                    phase: "cleanup-jboss"
+                    precedingPhases: ["stop-tomcat"]
+                    runList: ["recipe[atg::cleanup-jboss]"]
+        - cleanup-tomcat:
+               action: install
+               parameters:
+                    phase: "cleanup-tomcat"
+                    precedingPhases: ["cleanup-jboss"]
+                    runList: ["recipe[atg::cleanup-tomcat]"]
         - cleanup:
                action: install
                parameters:
                     phase: "cleanup"
+                    precedingPhases: ["cleanup-tomcat"]
                     runList: ["recipe[atg::cleanup]"]
         - jboss-install:
                action: install
                parameters:
-                    phase: "jboss"
+                    phase: "java"
                     precedingPhases: ["cleanup"]
-                    runList: ["recipe[atg::jboss]"]
+                    runList: ["recipe[atg::java]"]
+        - jboss-install: *jbossInstall
+        - tomcat-install: *tomcatInstall
         - profile-setup: *profileSetup
         - atg-core-install: *atgCoreInstall
         - atg-crs-install: *atgCrsInstall
         - atg-cim-configuration: *atgCimConfiguration
-        - jboss-startup: *jbossStartup
+        - iptables-configuration: *iptablesConfiguration
+        - tomcat-startup: *tomcatStartup
 
 destroy:
     steps:
