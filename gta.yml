@@ -106,10 +106,13 @@ launch:
 
 reinstall:
     steps:
+        - node-init: *nodeInit
+        - mysql-install: *mysqlInstall
         - tomcat-stop:
                action: install
                parameters:
                     phase: "stop-tomcat"
+                    precedingPhases: ["mysql"]
                     runList: ["recipe[atg::stop-tomcat]"]
         - cleanup-jboss:
                action: install
@@ -132,9 +135,10 @@ reinstall:
         - jboss-install:
                action: install
                parameters:
-                    phase: "jboss"
+                    phase: "java"
                     precedingPhases: ["cleanup"]
-                    runList: ["recipe[atg::jboss]"]
+                    runList: ["recipe[atg::java]"]
+        - jboss-install: *jbossInstall
         - tomcat-install: *tomcatInstall
         - profile-setup: *profileSetup
         - atg-core-install: *atgCoreInstall
