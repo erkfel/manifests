@@ -30,25 +30,25 @@ launch:
                parameters:
                     phase: "download"
                     runList: ["recipe[atg::artifacts]"]
-        - node-init:
+        - node-init: &nodeInit
                action: install
                parameters:
                     phase: "init"
                     precedingPhases: ["download"]
                     runList: ["recipe[atg::init]"]
-        - mysql-install:
+        - mysql-install: &mysqlInstall
                action: install
                parameters:
                     phase: "mysql"
                     precedingPhases: ["init"]
                     runList: ["recipe[atg::mysql]"]
-        - java-install:
+        - java-install: &javaInstall
                action: install
                parameters:
                     phase: "java"
                     precedingPhases: ["mysql"]
                     runList: ["recipe[atg::java]"]
-        - jboss-install:
+        - jboss-install: &jbossInstall
                action: install
                parameters:
                     phase: "jboss"
