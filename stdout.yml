@@ -55,3 +55,9 @@ arbitraryCommand:
             value: ${stderr}
 
 
+destroy:
+  steps:
+    - undeployEnv:
+        action: "undeployEnv"
+        parameters:
+          phase: "destroy"
