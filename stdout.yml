@@ -1,0 +1,33 @@
+launch:
+    parameters:
+        - instnaceSize:
+            description: Instnace size
+            default: "m1.small"
+            enum:
+                "m1.small": "m1.small"
+    steps:
+        - node-provision:
+            action: compute.grow
+            parameters:
+                ec2SecurityGroup: atg
+                hardwareId: $instnaceSize
+            output:
+                host: ips
+        - deploy:
+            action: execrun
+            description: Deploy the application to WLP
+            parameters:
+                phase: execute
+                precedingPhases: [provision]
+                command:
+                     - ls -la
+            output:
+                stdout: stdout
+                stderr: stderr
+    return:
+        - stdout:
+            description: Stdout
+            value: ${stdout}
+        - stderr:
+            description: Stderr
+            value: ${stderr}
