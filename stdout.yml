@@ -17,6 +17,7 @@ launch:
             action: execrun
             parameters:
                 phase: execute
+                roles: ["defaultRole"]
                 precedingPhases: [provision]
                 command:
                      - ls -la
@@ -40,6 +41,7 @@ arbitraryCommand:
             action: execrun
             parameters:
                 phase: execute
+                roles: ["defaultRole"]
                 precedingPhases: [provision]
                 command:
                      - $command
