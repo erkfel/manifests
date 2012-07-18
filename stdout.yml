@@ -13,9 +13,8 @@ launch:
                 hardwareId: $instnaceSize
             output:
                 host: ips
-        - deploy:
+        - command:
             action: execrun
-            description: Deploy the application to WLP
             parameters:
                 phase: execute
                 precedingPhases: [provision]
@@ -31,3 +30,28 @@ launch:
         - stderr:
             description: Stderr
             value: ${stderr}
+
+arbitraryCommand:
+    parameters:
+        - command:
+            description: Comamnd
+    steps:
+        - command:
+            action: execrun
+            parameters:
+                phase: execute
+                precedingPhases: [provision]
+                command:
+                     - $command
+            output:
+                stdout: stdout
+                stderr: stderr
+    return:
+        - stdout:
+            description: Stdout
+            value: ${stdout}
+        - stderr:
+            description: Stderr
+            value: ${stderr}
+
+
