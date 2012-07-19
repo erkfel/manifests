@@ -13,20 +13,42 @@ launch:
                 hardwareId: $instnaceSize
             output:
                 host: ips
-#        - command:
-#            action: execrun
-#            parameters:
-#                phase: execute
-#                roles: ["defaultRole"]
-#                precedingPhases: [provision]
-#                command:
-#                     - ls -la
-#            output:
-#                stdout: stdout
-#                stderr: stderr
+        - command:
+            action: execrun
+            parameters:
+                phase: execute
+                roles: ["defaultRole"]
+                precedingPhases: [provision]
+                command: date
+            output:
+                date: stdout
+        - command:
+            action: execrun
+            parameters:
+                phase: execute
+                roles: ["defaultRole"]
+                precedingPhases: [provision]
+                command: whoami
+            output:
+                currentuser: stdout
+        - command:
+            action: execrun
+            parameters:
+                phase: execute
+                roles: ["defaultRole"]
+                precedingPhases: [provision]
+                command: ls /home/ubuntu/.undeploy.me
+            output:
+                files: stdout
     return:
         - ip:
             value: ${host}
+        - date:
+            value: ${date}
+        - currentuser:
+            value: ${currentuser}
+        - work_dir_files:
+            value: ${files}
 
 arbitraryCommand:
     parameters:
