@@ -49,11 +49,11 @@ arbitraryCommand:
                 stdout: stdout
                 stderr: stderr
     return:
-        - stdout1:
-            description: Stdout
+        - stdout_other:
+            description: Stdout Other
             value: ${stdout}
-        - stderr1:
-            description: Stderr
+        - stderr_other:
+            description: Stderr Other
             value: ${stderr}
 
 
