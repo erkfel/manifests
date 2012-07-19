@@ -16,7 +16,7 @@ launch:
         - command:
             action: execrun
             parameters:
-                phase: execute
+                phase: date
                 roles: ["defaultRole"]
                 precedingPhases: [provision]
                 command:
@@ -26,9 +26,9 @@ launch:
         - command:
             action: execrun
             parameters:
-                phase: execute
+                phase: whoami
                 roles: ["defaultRole"]
-                precedingPhases: [provision]
+                precedingPhases: [date]
                 command:
                   - whoami
             output:
@@ -36,9 +36,9 @@ launch:
         - command:
             action: execrun
             parameters:
-                phase: execute
+                phase: files
                 roles: ["defaultRole"]
-                precedingPhases: [provision]
+                precedingPhases: [whoami]
                 command:
                   - ls /home/ubuntu/.undeploy.me
             output:
