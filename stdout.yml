@@ -11,47 +11,44 @@ launch:
             parameters:
                 ec2SecurityGroup: atg
                 hardwareId: $instnaceSize
+                roleName: node1
             output:
                 host: ips
+        - another-node-provision:
+            action: compute.grow
+            parameters:
+                ec2SecurityGroup: atg
+                hardwareId: $instnaceSize
+                roleName: node2
+            output:
+                another_host: ips
         - command:
             action: execrun
             parameters:
                 phase: date
-                roles: ["defaultRole"]
+                roles: ["node1"]
                 precedingPhases: [provision]
                 command:
-                  - date
+                  - hostname
             output:
-                date: stdout
+                node1_hosthane: stdout
         - command:
             action: execrun
             parameters:
                 phase: whoami
-                roles: ["defaultRole"]
-                precedingPhases: [date]
+                roles: ["node2"]
+                precedingPhases: [provision]
                 command:
-                  - whoami
+                  - hostname
             output:
-                currentuser: stdout
-        - command:
-            action: execrun
-            parameters:
-                phase: files
-                roles: ["defaultRole"]
-                precedingPhases: [whoami]
-                command:
-                  - ls /home/ubuntu/.undeploy.me
-            output:
-                files: stdout
+                node2_hosthane: stdout
     return:
         - ip:
             value: ${host}
-        - date:
-            value: ${date}
-        - currentuser:
-            value: ${currentuser}
-        - work_dir_files:
-            value: ${files}
+        - node1_hosthane:
+            value: ${node1_hosthane}
+        - node2_hosthane:
+            value: ${node2_hosthane}
 
 arbitraryCommand:
     parameters:
