@@ -13,24 +13,20 @@ launch:
                 hardwareId: $instnaceSize
             output:
                 host: ips
-        - command:
-            action: execrun
-            parameters:
-                phase: execute
-                roles: ["defaultRole"]
-                precedingPhases: [provision]
-                command:
-                     - ls -la
-            output:
-                stdout: stdout
-                stderr: stderr
+#        - command:
+#            action: execrun
+#            parameters:
+#                phase: execute
+#                roles: ["defaultRole"]
+#                precedingPhases: [provision]
+#                command:
+#                     - ls -la
+#            output:
+#                stdout: stdout
+#                stderr: stderr
     return:
-        - stdout:
-            description: Stdout
-            value: ${stdout}
-        - stderr:
-            description: Stderr
-            value: ${stderr}
+        - ip:
+            value: ${host}
 
 arbitraryCommand:
     parameters:
@@ -49,11 +45,9 @@ arbitraryCommand:
                 stdout: stdout
                 stderr: stderr
     return:
-        - stdout_other:
-            description: Stdout Other
+        - stdout:
             value: ${stdout}
-        - stderr_other:
-            description: Stderr Other
+        - stderr:
             value: ${stderr}
 
 
