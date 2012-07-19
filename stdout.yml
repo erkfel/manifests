@@ -49,10 +49,10 @@ arbitraryCommand:
                 stdout: stdout
                 stderr: stderr
     return:
-        - stdout:
+        - stdout1:
             description: Stdout
             value: ${stdout}
-        - stderr:
+        - stderr1:
             description: Stderr
             value: ${stderr}
 
