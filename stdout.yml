@@ -19,7 +19,8 @@ launch:
                 phase: execute
                 roles: ["defaultRole"]
                 precedingPhases: [provision]
-                command: date
+                command:
+                  - date
             output:
                 date: stdout
         - command:
@@ -28,7 +29,8 @@ launch:
                 phase: execute
                 roles: ["defaultRole"]
                 precedingPhases: [provision]
-                command: whoami
+                command:
+                  - whoami
             output:
                 currentuser: stdout
         - command:
@@ -37,7 +39,8 @@ launch:
                 phase: execute
                 roles: ["defaultRole"]
                 precedingPhases: [provision]
-                command: ls /home/ubuntu/.undeploy.me
+                command:
+                  - ls /home/ubuntu/.undeploy.me
             output:
                 files: stdout
     return:
