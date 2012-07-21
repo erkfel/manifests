@@ -3,8 +3,9 @@ launch:
         - instnaceSize:
             description: Instnace size
             default: "m1.small"
-            enum:
-                "m1.small": "m1.small"
+        - quantity:
+            description: Nodes count
+            default: 1
     steps:
         - node-provision:
             action: compute.grow
@@ -12,6 +13,7 @@ launch:
                 ec2SecurityGroup: atg
                 hardwareId: $instnaceSize
                 roleName: node1
+                quantity: $quantity
             output:
                 host: ips
         - another-node-provision:
