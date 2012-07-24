@@ -1,0 +1,42 @@
+launch:
+    parameters:
+        - instnaceSize:
+            description: Instnace size
+            default: "m1.small"
+        - jcloudsProvider:
+            default: nova
+        - jcloudsEndpoint:
+            default: http://172.30.0.1:5000/v2.0/
+        - jcloudsIdentity:
+            default: oaravin
+        - jcloudsCredential:
+            default: 23ac5ad0-7630-4232-9b0b-0284f902ea33
+        - vmCredentialResource:
+            default: "/environments/undeploy-me.pem"
+        - vmIdentity:
+            default: ubuntu
+        - imageId:
+            default: ubuntu-12.04-amd64
+    steps:
+        - node-provision:
+            action: provisionVm
+            parameters:
+                phase: provision
+                roleName: defaultRole
+                hardwareId: $instnaceSize
+                quantity: 1
+                retryCount: 1
+                jcloudsProvider: $jcloudsProvider
+                jcloudsEndpoint: $jcloudsEndpoint
+                jcloudsNodeNamePrefix: adp
+                jcloudsIdentity: $jcloudsIdentity
+                jcloudsCredential: $jcloudsCredential
+                vmCredentialResource: $vmCredentialResource
+                vmIdentity: $vmIdentity
+                imageId: $imageId
+            output:
+                host: ips
+
+    return:
+        reference-store:
+            value: ${host}
