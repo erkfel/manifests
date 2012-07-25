@@ -86,6 +86,9 @@ launch:
                     precedingPhases: ["iptables"]
                     runList: ["recipe[atg::post-tomcat]"]
     return:
+            host-ip:
+                description: ATG Host IP adress
+                value: ${host}
             reference-store:
                 description: ATG Commerce Reference Store
                 value: http://${host}:8080/crs
