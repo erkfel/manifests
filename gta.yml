@@ -64,14 +64,14 @@ launch:
         - atg-crs-install: &atgCrsInstall
                action: install
                parameters:
-                    phase: "atg-crs"
+                    phase: "atg-deploy-crs"
                     precedingPhases: ["atg-core"]
-                    runList: ["recipe[atg::atg-crs]"]
+                    runList: ["recipe[atg::atg-deploy-crs]"]
         - atg-cim-configuration: &atgCimConfiguration
                action: install
                parameters:
                     phase: "atg-cim"
-                    precedingPhases: ["atg-crs"]
+                    precedingPhases: ["atg-deploy-crs"]
                     runList: ["recipe[atg::atg-cim-tomcat-no-cie]"]
         - iptables-configuration: &iptablesConfiguration
                action: install
@@ -95,49 +95,6 @@ launch:
             controll-center:
                 description: ATG Business Control Center
                 value: http://${host}:8180/atg/bcc
-
-reinstall:
-    steps:
-        - node-init: *nodeInit
-        - mysql-install: *mysqlInstall
-        - tomcat-stop:
-               action: install
-               parameters:
-                    phase: "stop-tomcat"
-                    precedingPhases: ["mysql"]
-                    runList: ["recipe[atg::stop-tomcat]"]
-        - cleanup-jboss:
-               action: install
-               parameters:
-                    phase: "cleanup-jboss"
-                    precedingPhases: ["stop-tomcat"]
-                    runList: ["recipe[atg::cleanup-jboss]"]
-        - cleanup-tomcat:
-               action: install
-               parameters:
-                    phase: "cleanup-tomcat"
-                    precedingPhases: ["cleanup-jboss"]
-                    runList: ["recipe[atg::cleanup-tomcat]"]
-        - cleanup:
-               action: install
-               parameters:
-                    phase: "cleanup"
-                    precedingPhases: ["cleanup-tomcat"]
-                    runList: ["recipe[atg::cleanup]"]
-        - jboss-install:
-               action: install
-               parameters:
-                    phase: "java"
-                    precedingPhases: ["cleanup"]
-                    runList: ["recipe[atg::java]"]
-        - jboss-install: *jbossInstall
-        - tomcat-install: *tomcatInstall
-        - profile-setup: *profileSetup
-        - atg-core-install: *atgCoreInstall
-        - atg-crs-install: *atgCrsInstall
-        - atg-cim-configuration: *atgCimConfiguration
-        - iptables-configuration: *iptablesConfiguration
-        - tomcat-startup: *tomcatStartup
 
 destroy:
     steps:
