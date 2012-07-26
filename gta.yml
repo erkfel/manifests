@@ -18,7 +18,7 @@ launch:
                action: install
                parameters:
                     phase: "download"
-                    runList: ["recipe[atg::artifacts-10.1.0]"]
+                    runList: ["recipe[atg::artifacts]"]
         - node-init: &nodeInit
                action: install
                parameters:
@@ -60,7 +60,7 @@ launch:
                parameters:
                     phase: "atg-core"
                     precedingPhases: ["profile"]
-                    runList: ["recipe[atg::atg-core-10.1.0]"]
+                    runList: ["recipe[atg::atg-core]"]
         - atg-crs-install: &atgCrsInstall
                action: install
                parameters:
