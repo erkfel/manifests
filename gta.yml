@@ -60,7 +60,7 @@ launch:
                parameters:
                     phase: "atg-core"
                     precedingPhases: ["profile"]
-                    runList: ["recipe[atg::atg-core]"]
+                    runList: ["recipe[atg::atg-core-10.1.0]"]
         - atg-crs-install: &atgCrsInstall
                action: install
                parameters:
