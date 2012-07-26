@@ -18,7 +18,7 @@ launch:
                action: install
                parameters:
                     phase: "download"
-                    runList: ["recipe[atg::artifacts]"]
+                    runList: ["recipe[atg::artifacts-10.1.0]"]
         - node-init: &nodeInit
                action: install
                parameters:
