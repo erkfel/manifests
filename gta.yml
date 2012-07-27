@@ -1,17 +1,17 @@
 launch:
     parameters:
-        - instnaceSize:
-            description: Instnace size
-            default: "m1.medium"
-            enum:
-                "m1.medium": "m1.medium"
-                "m1.large": "m1.large"
+        - ip:
+            description: VM
+            default: 172.18.130.65
+        - identity:
+            description: VM
+            default: oaravin
     steps:
         - node-provision:
             action: compute.grow
             parameters:
-                ec2SecurityGroup: atg
-                hardwareId: $instnaceSize
+                ip: $ip
+                vmIdentity: $identity
             output:
                 host: ips
         - artifacts-download:
@@ -95,10 +95,35 @@ launch:
             controll-center:
                 description: ATG Business Control Center
                 value: http://${host}:8180/atg/bcc
-
 destroy:
     steps:
-        - destroy-vm:
-            action: undeployEnv
-            parameters:
-                phase: destroy
+        - tomcat-stop:
+               action: install
+               parameters:
+                    phase: "stop-tomcat"
+                    precedingPhases: ["mysql"]
+                    runList: ["recipe[atg::stop-tomcat]"]
+        - cleanup-jboss:
+               action: install
+               parameters:
+                    phase: "cleanup-jboss"
+                    precedingPhases: ["stop-tomcat"]
+                    runList: ["recipe[atg::cleanup-jboss]"]
+        - cleanup-tomcat:
+               action: install
+               parameters:
+                    phase: "cleanup-tomcat"
+                    precedingPhases: ["cleanup-jboss"]
+                    runList: ["recipe[atg::cleanup-tomcat]"]
+        - cleanup:
+               action: install
+               parameters:
+                    phase: "cleanup"
+                    precedingPhases: ["cleanup-tomcat"]
+                    runList: ["recipe[atg::cleanup]"]
+        - jboss-install:
+               action: install
+               parameters:
+                    phase: "java"
+                    precedingPhases: ["cleanup"]
+                    runList: ["recipe[atg::java]"]
