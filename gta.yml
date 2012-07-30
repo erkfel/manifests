@@ -121,9 +121,3 @@ destroy:
                     phase: "cleanup"
                     precedingPhases: ["cleanup-tomcat"]
                     runList: ["recipe[atg::cleanup]"]
-        - jboss-install:
-               action: install
-               parameters:
-                    phase: "java"
-                    precedingPhases: ["cleanup"]
-                    runList: ["recipe[atg::java]"]
