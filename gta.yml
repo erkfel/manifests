@@ -2,19 +2,19 @@ launch:
     parameters:
         - ip:
             description: VM
-            default: ec2-174-129-51-23.compute-1.amazonaws.com
+            default: 172.18.130.65
         - identity:
             description: User name
-            default: root
+            default: oaravin
         - repository-url:
             description: Artifact repository URL
-            default: https://s3.amazonaws.com/project-k
+            default: http://pjk-storage.vm.griddynamics.net
         - nexus-url:
             description: Nexux URL
-            default: https://s3.amazonaws.com/project-k
+            default: http://black.calf.lupus.griddynamics.net:8081/nexus/content/repositories/atg/atg/commerce-reference-store/10.1
         - artifact-name:
             description: Aftifact name
-            default: crs.assembly-1.0.766.zip
+            default: commerce-reference-store-10.1.zip
     steps:
         - node-provision:
             action: compute.grow
