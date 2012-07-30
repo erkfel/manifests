@@ -2,10 +2,19 @@ launch:
     parameters:
         - ip:
             description: VM
-            default: 172.18.130.65
+            default: ec2-174-129-51-23.compute-1.amazonaws.com
         - identity:
-            description: VM
-            default: oaravin
+            description: User name
+            default: root
+        - repository-url:
+            description: Artifact repository URL
+            default: https://s3.amazonaws.com/project-k
+        - nexus-url:
+            description: Nexux URL
+            default: https://s3.amazonaws.com/project-k
+        - artifact-name:
+            description: Aftifact name
+            default: crs.assembly-1.0.766.zip
     steps:
         - node-provision:
             action: compute.grow
@@ -19,72 +28,120 @@ launch:
                parameters:
                     phase: "download"
                     runList: ["recipe[atg::artifacts]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        nexus-url: $nexus-url
+                        artifact-name: $artifact-name
         - node-init: &nodeInit
                action: install
                parameters:
                     phase: "init"
                     precedingPhases: ["download"]
                     runList: ["recipe[atg::init]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        nexus-url: $nexus-url
+                        artifact-name: $artifact-name
         - mysql-install: &mysqlInstall
                action: install
                parameters:
                     phase: "mysql"
                     precedingPhases: ["init"]
                     runList: ["recipe[atg::mysql]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        nexus-url: $nexus-url
+                        artifact-name: $artifact-name
         - java-install: &javaInstall
                action: install
                parameters:
                     phase: "java"
                     precedingPhases: ["mysql"]
                     runList: ["recipe[atg::java]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        nexus-url: $nexus-url
+                        artifact-name: $artifact-name
         - jboss-install: &jbossInstall
                action: install
                parameters:
                     phase: "jboss"
                     precedingPhases: ["java"]
                     runList: ["recipe[atg::jboss]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        nexus-url: $nexus-url
+                        artifact-name: $artifact-name
         - tomcat-install: &tomcatInstall
                action: install
                parameters:
                     phase: "tomcat"
                     precedingPhases: ["jboss"]
                     runList: ["recipe[atg::tomcat]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        nexus-url: $nexus-url
+                        artifact-name: $artifact-name
         - profile-setup: &profileSetup
                action: install
                parameters:
                     phase: "profile"
                     precedingPhases: ["tomcat"]
                     runList: ["recipe[atg::profile]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        nexus-url: $nexus-url
+                        artifact-name: $artifact-name
         - atg-core-install: &atgCoreInstall
                action: install
                parameters:
                     phase: "atg-core"
                     precedingPhases: ["profile"]
                     runList: ["recipe[atg::atg-core]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        nexus-url: $nexus-url
+                        artifact-name: $artifact-name
         - atg-crs-install: &atgCrsInstall
                action: install
                parameters:
                     phase: "atg-deploy-crs"
                     precedingPhases: ["atg-core"]
                     runList: ["recipe[atg::atg-deploy-crs]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        nexus-url: $nexus-url
+                        artifact-name: $artifact-name
         - atg-cim-configuration: &atgCimConfiguration
                action: install
                parameters:
                     phase: "atg-cim"
                     precedingPhases: ["atg-deploy-crs"]
                     runList: ["recipe[atg::atg-cim-tomcat-no-cie]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        nexus-url: $nexus-url
+                        artifact-name: $artifact-name
         - iptables-configuration: &iptablesConfiguration
                action: install
                parameters:
                     phase: "iptables"
                     precedingPhases: ["atg-cim"]
                     runList: ["recipe[atg::iptables]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        nexus-url: $nexus-url
+                        artifact-name: $artifact-name
         - tomcat-startup: &tomcatStartup
                action: install
                parameters:
                     phase: "tomcat-startup"
                     precedingPhases: ["iptables"]
                     runList: ["recipe[atg::post-tomcat]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        nexus-url: $nexus-url
+                        artifact-name: $artifact-name
     return:
             host-ip:
                 description: ATG Host IP adress
