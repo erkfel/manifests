@@ -9,12 +9,9 @@ launch:
         - repository-url:
             description: Artifact repository URL
             default: http://172.18.130.72
-        - nexus-url:
-            description: Nexux URL
-            default: http://black.calf.lupus.griddynamics.net:8081/nexus/content/repositories/atg/atg/commerce-reference-store/10.1
-        - artifact-name:
+        - artifact-url:
             description: Aftifact name
-            default: commerce-reference-store-10.1.zip
+            default: http://black.calf.lupus.griddynamics.net:8081/nexus/content/repositories/atg/atg/commerce-reference-store/10.1/commerce-reference-store-10.1.zip
     steps:
         - node-provision:
             action: compute.grow
@@ -31,7 +28,7 @@ launch:
                     jattrs:
                         repository-url: $repository-url
                         nexus-url: $nexus-url
-                        artifact-name: $artifact-name
+                        artifact-url: $artifact-url
         - node-init: &nodeInit
                action: install
                parameters:
