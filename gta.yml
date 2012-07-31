@@ -8,7 +8,7 @@ launch:
             default: oaravin
         - repository-url:
             description: Artifact repository URL
-            default: http://pjk-storage.vm.griddynamics.net
+            default: http://172.18.130.72
         - nexus-url:
             description: Nexux URL
             default: http://black.calf.lupus.griddynamics.net:8081/nexus/content/repositories/atg/atg/commerce-reference-store/10.1
