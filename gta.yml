@@ -27,7 +27,6 @@ launch:
                     runList: ["recipe[atg::artifacts]"]
                     jattrs:
                         repository-url: $repository-url
-                        nexus-url: $nexus-url
                         artifact-url: $artifact-url
         - node-init: &nodeInit
                action: install
