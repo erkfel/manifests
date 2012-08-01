@@ -33,48 +33,12 @@ launch:
                parameters:
                     phase: "init"
                     precedingPhases: ["download"]
-                    runList: ["recipe[atg::init]"]
-        - mysql-install: &mysqlInstall
-               action: install
-               parameters:
-                    phase: "mysql"
-                    precedingPhases: ["init"]
-                    runList: ["recipe[atg::mysql]"]
-        - java-install: &javaInstall
-               action: install
-               parameters:
-                    phase: "java"
-                    precedingPhases: ["mysql"]
-                    runList: ["recipe[atg::java]"]
-        - jboss-install: &jbossInstall
-               action: install
-               parameters:
-                    phase: "jboss"
-                    precedingPhases: ["java"]
-                    runList: ["recipe[atg::jboss]"]
-        - tomcat-install: &tomcatInstall
-               action: install
-               parameters:
-                    phase: "tomcat"
-                    precedingPhases: ["jboss"]
-                    runList: ["recipe[atg::tomcat]"]
-        - profile-setup: &profileSetup
-               action: install
-               parameters:
-                    phase: "profile"
-                    precedingPhases: ["tomcat"]
-                    runList: ["recipe[atg::profile]"]
-        - atg-core-install: &atgCoreInstall
-               action: install
-               parameters:
-                    phase: "atg-core"
-                    precedingPhases: ["profile"]
-                    runList: ["recipe[atg::atg-core]"]
+                    runList: ["recipe[atg::init],recipe[atg::mysql],recipe[atg::java],recipe[atg::jboss],recipe[atg::tomcat],recipe[atg::profile]"]
         - atg-crs-install: &atgCrsInstall
                action: install
                parameters:
                     phase: "atg-deploy-crs"
-                    precedingPhases: ["atg-core"]
+                    precedingPhases: ["download"]
                     runList: ["recipe[atg::atg-deploy-crs]"]
         - atg-cim-configuration: &atgCimConfiguration
                action: install
@@ -112,21 +76,9 @@ destroy:
                     phase: "stop-tomcat"
                     precedingPhases: ["mysql"]
                     runList: ["recipe[atg::stop-tomcat]"]
-        - cleanup-jboss:
-               action: install
-               parameters:
-                    phase: "cleanup-jboss"
-                    precedingPhases: ["stop-tomcat"]
-                    runList: ["recipe[atg::cleanup-jboss]"]
-        - cleanup-tomcat:
-               action: install
-               parameters:
-                    phase: "cleanup-tomcat"
-                    precedingPhases: ["cleanup-jboss"]
-                    runList: ["recipe[atg::cleanup-tomcat]"]
         - cleanup:
                action: install
                parameters:
                     phase: "cleanup"
-                    precedingPhases: ["cleanup-tomcat"]
-                    runList: ["recipe[atg::cleanup]"]
+                    precedingPhases: ["stop-tomcat"]
+                    runList: ["recipe[atg::cleanup-jboss],recipe[atg::cleanup-tomcat],recipe[atg::cleanup]"]
