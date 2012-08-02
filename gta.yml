@@ -25,6 +25,9 @@ launch:
                parameters:
                     phase: "init"
                     runList: ["recipe[atg::artifacts]", "recipe[atg::init]", "recipe[atg::mysql]", "recipe[atg::java]", "recipe[atg::jboss]", "recipe[atg::tomcat]", "recipe[atg::profile]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        artifact-url: $artifact-url
         - atg-install: &atgCoreInstall
                action: install
                parameters:
