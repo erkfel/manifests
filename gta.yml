@@ -1,17 +1,23 @@
 launch:
     parameters:
-        - instnaceSize:
-            description: Instnace size
-            default: "m1.medium"
-            enum:
-                "m1.medium": "m1.medium"
-                "m1.large": "m1.large"
+        - ip:
+            description: VM
+            default: 172.18.130.65
+        - identity:
+            description: User name
+            default: pjk
+        - repository-url:
+            description: Artifact repository URL
+            default: http://172.18.130.72
+        - artifact-url:
+            description: Aftifact name
+            default: http://black.calf.lupus.griddynamics.net:8081/nexus/content/repositories/atg/atg/commerce-reference-store/10.1/commerce-reference-store-10.1.zip
     steps:
         - node-provision:
             action: compute.grow
             parameters:
-                ec2SecurityGroup: atg
-                hardwareId: $instnaceSize
+                ip: $ip
+                vmIdentity: $identity
             output:
                 host: ips
         - artifacts-download:
@@ -19,72 +25,33 @@ launch:
                parameters:
                     phase: "download"
                     runList: ["recipe[atg::artifacts]"]
+                    jattrs:
+                        repository-url: $repository-url
+                        artifact-url: $artifact-url
         - node-init: &nodeInit
                action: install
                parameters:
                     phase: "init"
                     precedingPhases: ["download"]
-                    runList: ["recipe[atg::init]"]
-        - mysql-install: &mysqlInstall
-               action: install
-               parameters:
-                    phase: "mysql"
-                    precedingPhases: ["init"]
-                    runList: ["recipe[atg::mysql]"]
-        - java-install: &javaInstall
-               action: install
-               parameters:
-                    phase: "java"
-                    precedingPhases: ["mysql"]
-                    runList: ["recipe[atg::java]"]
-        - jboss-install: &jbossInstall
-               action: install
-               parameters:
-                    phase: "jboss"
-                    precedingPhases: ["java"]
-                    runList: ["recipe[atg::jboss]"]
-        - tomcat-install: &tomcatInstall
-               action: install
-               parameters:
-                    phase: "tomcat"
-                    precedingPhases: ["jboss"]
-                    runList: ["recipe[atg::tomcat]"]
-        - profile-setup: &profileSetup
-               action: install
-               parameters:
-                    phase: "profile"
-                    precedingPhases: ["tomcat"]
-                    runList: ["recipe[atg::profile]"]
+                    runList: ["recipe[atg::init]", "recipe[atg::mysql]", "recipe[atg::java]", "recipe[atg::jboss]", "recipe[atg::tomcat]", "recipe[atg::profile]"]
         - atg-core-install: &atgCoreInstall
                action: install
                parameters:
                     phase: "atg-core"
-                    precedingPhases: ["profile"]
-                    runList: ["recipe[atg::atg-core]"]
-        - atg-crs-install: &atgCrsInstall
-               action: install
-               parameters:
-                    phase: "atg-deploy-crs"
-                    precedingPhases: ["atg-core"]
-                    runList: ["recipe[atg::atg-deploy-crs]"]
+                    precedingPhases: ["init"]
+                    runList: ["recipe[atg::atg-core]", "recipe[atg::atg-deploy-crs]"]
         - atg-cim-configuration: &atgCimConfiguration
                action: install
                parameters:
                     phase: "atg-cim"
-                    precedingPhases: ["atg-deploy-crs"]
+                    precedingPhases: ["atg-core"]
                     runList: ["recipe[atg::atg-cim-tomcat-no-cie]"]
-        - iptables-configuration: &iptablesConfiguration
-               action: install
-               parameters:
-                    phase: "iptables"
-                    precedingPhases: ["atg-cim"]
-                    runList: ["recipe[atg::iptables]"]
         - tomcat-startup: &tomcatStartup
                action: install
                parameters:
                     phase: "tomcat-startup"
-                    precedingPhases: ["iptables"]
-                    runList: ["recipe[atg::post-tomcat]"]
+                    precedingPhases: ["atg-cim"]
+                    runList: ["recipe[atg::iptables]", "recipe[atg::post-tomcat]"]
     return:
             host-ip:
                 description: ATG Host IP adress
@@ -95,10 +62,17 @@ launch:
             controll-center:
                 description: ATG Business Control Center
                 value: http://${host}:8180/atg/bcc
-
 destroy:
     steps:
-        - destroy-vm:
-            action: undeployEnv
-            parameters:
-                phase: destroy
+        - tomcat-stop:
+               action: install
+               parameters:
+                    phase: "stop-tomcat"
+                    precedingPhases: ["mysql"]
+                    runList: ["recipe[atg::stop-tomcat]"]
+        - cleanup:
+               action: install
+               parameters:
+                    phase: "cleanup"
+                    precedingPhases: ["stop-tomcat"]
+                    runList: ["recipe[atg::cleanup-jboss]", "recipe[atg::cleanup-tomcat]", "recipe[atg::cleanup]"]
