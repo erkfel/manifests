@@ -4,7 +4,7 @@ launch:
             description: Rest VM allocation
             default: http://ec2-23-22-3-68.compute-1.amazonaws.com:8090/pool/allocate
         - method:
-            description: Method
+            description: REST Method
             default: GET
         - identity:
             description: User name
