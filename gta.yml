@@ -20,37 +20,22 @@ launch:
                 vmIdentity: $identity
             output:
                 host: ips
-        - artifacts-download:
-               action: install
-               parameters:
-                    phase: "download"
-                    runList: ["recipe[atg::artifacts]"]
-                    jattrs:
-                        repository-url: $repository-url
-                        artifact-url: $artifact-url
         - node-init: &nodeInit
                action: install
                parameters:
                     phase: "init"
-                    precedingPhases: ["download"]
-                    runList: ["recipe[atg::init]", "recipe[atg::mysql]", "recipe[atg::java]", "recipe[atg::jboss]", "recipe[atg::tomcat]", "recipe[atg::profile]"]
-        - atg-core-install: &atgCoreInstall
+                    runList: ["recipe[atg::artifacts]", "recipe[atg::init]", "recipe[atg::mysql]", "recipe[atg::java]", "recipe[atg::jboss]", "recipe[atg::tomcat]", "recipe[atg::profile]"]
+        - atg-install: &atgCoreInstall
                action: install
                parameters:
-                    phase: "atg-core"
+                    phase: "atg-install"
                     precedingPhases: ["init"]
-                    runList: ["recipe[atg::atg-core]", "recipe[atg::atg-deploy-crs]"]
-        - atg-cim-configuration: &atgCimConfiguration
-               action: install
-               parameters:
-                    phase: "atg-cim"
-                    precedingPhases: ["atg-core"]
-                    runList: ["recipe[atg::atg-cim-tomcat-no-cie]"]
+                    runList: ["recipe[atg::atg-core]", "recipe[atg::atg-deploy-crs]", "recipe[atg::atg-cim-tomcat-no-cie]"]
         - tomcat-startup: &tomcatStartup
                action: install
                parameters:
                     phase: "tomcat-startup"
-                    precedingPhases: ["atg-cim"]
+                    precedingPhases: ["atg-install"]
                     runList: ["recipe[atg::iptables]", "recipe[atg::post-tomcat]"]
     return:
             host-ip:
@@ -64,15 +49,9 @@ launch:
                 value: http://${host}:8180/atg/bcc
 destroy:
     steps:
-        - tomcat-stop:
-               action: install
-               parameters:
-                    phase: "stop-tomcat"
-                    precedingPhases: ["mysql"]
-                    runList: ["recipe[atg::stop-tomcat]"]
         - cleanup:
                action: install
                parameters:
                     phase: "cleanup"
                     precedingPhases: ["stop-tomcat"]
-                    runList: ["recipe[atg::cleanup-jboss]", "recipe[atg::cleanup-tomcat]", "recipe[atg::cleanup]"]
+                    runList: ["recipe[atg::stop-tomcat]", "recipe[atg::cleanup-jboss]", "recipe[atg::cleanup-tomcat]", "recipe[atg::cleanup]"]
