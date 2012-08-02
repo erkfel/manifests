@@ -31,7 +31,7 @@ launch:
             parameters:
                 ip: $ip
                 vmIdentity: $identity
-                precedingPhases: [allocating]
+                precedingPhases: ["allocating"]
             output:
                 host: ips
         - artifacts-download:
@@ -47,31 +47,25 @@ launch:
                parameters:
                     phase: "init"
                     precedingPhases: ["download"]
-                    runList: ["recipe[atg::init],recipe[atg::mysql],recipe[atg::java],recipe[atg::jboss],recipe[atg::tomcat],recipe[atg::profile]"]
-        - atg-crs-install: &atgCrsInstall
+                    runList: ["recipe[atg::init]", "recipe[atg::mysql]", "recipe[atg::java]", "recipe[atg::jboss]", "recipe[atg::tomcat]", "recipe[atg::profile]"]
+        - atg-core-install: &atgCoreInstall
                action: install
                parameters:
-                    phase: "atg-deploy-crs"
-                    precedingPhases: ["download"]
-                    runList: ["recipe[atg::atg-deploy-crs]"]
+                    phase: "atg-core"
+                    precedingPhases: ["init"]
+                    runList: ["recipe[atg::atg-core]", "recipe[atg::atg-deploy-crs]"]
         - atg-cim-configuration: &atgCimConfiguration
                action: install
                parameters:
                     phase: "atg-cim"
-                    precedingPhases: ["atg-deploy-crs"]
+                    precedingPhases: ["atg-core"]
                     runList: ["recipe[atg::atg-cim-tomcat-no-cie]"]
-        - iptables-configuration: &iptablesConfiguration
-               action: install
-               parameters:
-                    phase: "iptables"
-                    precedingPhases: ["atg-cim"]
-                    runList: ["recipe[atg::iptables]"]
         - tomcat-startup: &tomcatStartup
                action: install
                parameters:
                     phase: "tomcat-startup"
-                    precedingPhases: ["iptables"]
-                    runList: ["recipe[atg::post-tomcat]"]
+                    precedingPhases: ["atg-cim"]
+                    runList: ["recipe[atg::iptables]", "recipe[atg::post-tomcat]"]
     return:
             host-ip:
                 description: ATG Host IP adress
@@ -95,12 +89,15 @@ destroy:
                parameters:
                     phase: "cleanup"
                     precedingPhases: ["stop-tomcat"]
-                    runList: ["recipe[atg::cleanup-jboss],recipe[atg::cleanup-tomcat],recipe[atg::cleanup]"]
+                    runList: ["recipe[atg::cleanup-jboss]", "recipe[atg::cleanup-tomcat]", "recipe[atg::cleanup]"]
         - release-vm:
                action: restcall
                parameters:
                     phase: date
                     roles: ["node1"]
-                    precedingPhases: [provision]
+                    precedingPhases: [cleanup]
                     command: http://ec2-23-22-3-68.compute-1.amazonaws.com:8090/pool/release/${id}
                     method: POST
+
+
+
