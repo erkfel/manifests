@@ -20,7 +20,7 @@ launch:
             output:
                 ip: ip
                 id: id
-        - node-provision:
+        - connect-vm:
             action: compute.grow
             parameters:
                 ip: $ip
