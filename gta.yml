@@ -9,6 +9,9 @@ launch:
         - artifact-url:
             description: CRS Aftifact name
             default: http://black.calf.lupus.griddynamics.net:8081/nexus/content/repositories/atg/atg/commerce-reference-store/10.1/commerce-reference-store-10.1.zip
+        - init-retry-count:
+            description: Init retry count
+            default: 2
     steps:
         - allocate-vm:
             action: restcall
@@ -31,6 +34,7 @@ launch:
                action: install
                parameters:
                     phase: "init"
+                    retryCount: $init-retry-count
                     runList: ["recipe[atg::artifacts]", "recipe[atg::init]", "recipe[atg::mysql]", "recipe[atg::java]", "recipe[atg::jboss]", "recipe[atg::tomcat]", "recipe[atg::profile]"]
                     jattrs:
                         repository-url: $repository-url
