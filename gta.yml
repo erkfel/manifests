@@ -71,5 +71,5 @@ destroy:
                     phase: date
                     roles: ["node1"]
                     precedingPhases: [cleanup]
-                    command: http://ec2-23-22-3-68.compute-1.amazonaws.com:8090/pool/release/${id}
+                    command: http://ec2-23-22-3-68.compute-1.amazonaws.com:8090/pool/release/$id
                     method: POST
