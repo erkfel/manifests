@@ -8,7 +8,7 @@ launch:
             default: GET
         - body:
             description: Body
-            default:
+            default: ""
     steps:
         - allocate-vm:
             action: restcall
