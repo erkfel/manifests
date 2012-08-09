@@ -39,8 +39,6 @@ launch:
             value: ${status_line}
         content:
             value: ${content}
-        headers:
-            value: ${headers}
 
 destroy:
     steps: []
