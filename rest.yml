@@ -1,0 +1,44 @@
+launch:
+    parameters:
+        - command:
+            description: VM allocation command
+            default: http://ec2-23-22-3-68.compute-1.amazonaws.com:8090/pool/allocate
+        - method:
+            default: http://172.18.130.72
+        - body:
+            default: http://black.calf.lupus.griddynamics.net:8081/nexus/content/repositories/atg/atg/commerce-reference-store/10.1/commerce-reference-store-10.1.zip
+    steps:
+        - allocate-vm:
+            action: restcall
+            parameters:
+                phase: allocating
+                roles: ["defaultRole"]
+                command: $command
+                method: $method
+                body: $body
+                content-type: application/json
+                headers:
+                  Accept: application/json
+            output:
+                response_code: response-code
+                protocol_version: protocol-version
+                reason_phrase: reason-phrase
+                status_line: status-line
+                content: content
+                headers: headers
+    return:
+        response_code:
+            value: ${response_code}
+        protocol_version:
+            value: ${protocol_version}
+        reason_phrase:
+            value: ${reason_phrase}
+        status_line:
+            value: ${status_line}
+        content:
+            value: ${content}
+        headers:
+            value: ${headers}
+
+destroy:
+    steps: []
