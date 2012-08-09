@@ -1,12 +1,14 @@
 launch:
     parameters:
         - command:
-            description: VM allocation command
-            default: http://ec2-23-22-3-68.compute-1.amazonaws.com:8090/pool/allocate
+            description: Command
+            default: http://ec2-23-22-3-68.compute-1.amazonaws.com:8090/pool
         - method:
-            default: http://172.18.130.72
+            description: method
+            default: GET
         - body:
-            default: http://black.calf.lupus.griddynamics.net:8081/nexus/content/repositories/atg/atg/commerce-reference-store/10.1/commerce-reference-store-10.1.zip
+            description: Body
+            default:
     steps:
         - allocate-vm:
             action: restcall
