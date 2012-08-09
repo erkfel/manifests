@@ -9,6 +9,9 @@ launch:
         - body:
             description: Body
             default: ""
+        - empty:
+            description: empty
+            default: ""
     steps:
         - allocate-vm:
             action: restcall
@@ -33,6 +36,8 @@ launch:
             value: ${response_code}
         protocol_version:
             value: ${protocol_version}
+        empty:
+            value: ${empty}
         reason_phrase:
             value: ${reason_phrase}
         status_line:
