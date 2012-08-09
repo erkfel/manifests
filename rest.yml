@@ -2,16 +2,13 @@ launch:
     parameters:
         - command:
             description: Command
-            default: http://ec2-23-22-3-68.compute-1.amazonaws.com:8090/pool
+            default: http://localhost:8090/pool/allocate
         - method:
             description: method
             default: GET
         - body:
             description: Body
-            default: ""
-        - empty:
-            description: empty
-            default: ""
+            default: "qwe"
     steps:
         - allocate-vm:
             action: restcall
@@ -36,8 +33,6 @@ launch:
             value: ${response_code}
         protocol_version:
             value: ${protocol_version}
-        empty:
-            value: ${empty}
         reason_phrase:
             value: ${reason_phrase}
         status_line:
