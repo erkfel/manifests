@@ -2,12 +2,11 @@ launch:
     parameters:
         - command:
             description: Command
-            default: http://localhost:8090/pool/allocate
         - method:
             description: method
-            default: GET
         - body:
             description: Body
+            default: "qwe"
     steps:
         - allocate-vm:
             action: restcall
