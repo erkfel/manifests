@@ -26,7 +26,7 @@ launch:
                 status_line: status-line
                 content: content
                 headers: headers
-                id: id
+                id: jsonpath
     return:
         response_code:
             value: ${response_code}
