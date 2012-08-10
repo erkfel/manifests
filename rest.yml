@@ -8,7 +8,6 @@ launch:
             default: GET
         - body:
             description: Body
-            default: "qwe"
     steps:
         - allocate-vm:
             action: restcall
