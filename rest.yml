@@ -15,9 +15,9 @@ launch:
             parameters:
                 phase: allocating
                 roles: ["defaultRole"]
-                command: $command
-                method: $method
-                body: $body
+                command: ${command}
+                method: ${method}
+                body: ${body}
                 contentType: application/json
                 headers:
                   Accept: application/json
