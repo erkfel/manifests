@@ -11,7 +11,7 @@ launch:
             action: compute.grow
             parameters:
                 ec2SecurityGroup: atg
-                hardwareId: $instnaceSize
+                hardwareId: ${instnaceSize}
             output:
                 host: ips
         - artifacts-download:
